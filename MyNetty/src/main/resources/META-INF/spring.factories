@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.juno.framework.netty.configuration.MyNettyAutoConfiguration
