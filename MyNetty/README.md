@@ -92,6 +92,27 @@ public class NettyMessage {
 
 }
 ```
+* Visit http: // localhost: port / netty-api to learn about the interface and parameter information provided by netty server
+
+```json
+{
+    "apis":[
+        {
+            "path":"/registry",
+            "param":{
+                "seq":"java.lang.String"
+            }
+        },
+        {
+            "path":"/ack-message",
+            "param":{
+                "message":"com.juno.framework.netty.beans.NettyMessage"
+            }
+        }
+    ]
+}
+```
+
 ### Instalación 🔧
 Download source code from github
 ```git bash
