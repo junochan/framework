@@ -37,7 +37,7 @@ public class PropertySourcedRequestMappingHandlerMapping extends RequestMappingH
     @Override
     protected void initHandlerMethods() {
         logger.debug("initialising the handler methods");
-        setOrder(Ordered.HIGHEST_PRECEDENCE + 1000);
+        setOrder(Ordered.HIGHEST_PRECEDENCE + 999);
         Class<?> clazz = handler.getClass();
         if (isHandler(clazz)) {
             for (Method method : clazz.getMethods()) {
