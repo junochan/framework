@@ -1,4 +1,4 @@
-package com.juno.framework.netty.core;
+package com.juno.framework.netty.core.server;
 
 import com.juno.framework.netty.configuration.NettyProperties;
 import io.netty.bootstrap.ServerBootstrap;
@@ -54,8 +54,6 @@ public class NettyServer {
     public void stop() {
         serverChannel.close();
         serverChannel.parent().close();
-        workerGroup.shutdownGracefully();
-        bossGroup.shutdownGracefully();
     }
 
 }

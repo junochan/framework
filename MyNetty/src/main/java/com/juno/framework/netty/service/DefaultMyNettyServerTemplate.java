@@ -1,9 +1,7 @@
 package com.juno.framework.netty.service;
 
 import com.alibaba.fastjson.JSON;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+import com.juno.framework.netty.annotation.NettyService;
 import com.juno.framework.netty.beans.NettyMessage;
 import com.juno.framework.netty.beans.SyncResponse;
 import com.juno.framework.netty.configuration.NettyProperties;
@@ -13,7 +11,6 @@ import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -22,35 +19,17 @@ import java.util.concurrent.TimeUnit;
  * @Date: 2020/4/8 9:39
  */
 @Slf4j
-public class DefaultMyNettyTemplate implements MyNettyTemplate {
+@NettyService
+public class DefaultMyNettyServerTemplate implements MyNettyServerTemplate {
 
     private NettyProperties nettyProperties;
-    private LoadingCache<String, SyncResponse<String>> responseCache;
-
     private ChannelPool channelPool;
+    private MyNettyResponseCache responseCache;
 
-    public DefaultMyNettyTemplate(NettyProperties nettyProperties) {
+    public DefaultMyNettyServerTemplate(NettyProperties nettyProperties, MyNettyResponseCache myNettyResponseCache) {
         this.nettyProperties = nettyProperties;
-        responseCache = CacheBuilder.newBuilder()
-                //设置缓存容器的初始容量
-                .initialCapacity(nettyProperties.getCacheInitialCapacity())
-                // maximumSize 设置缓存大小
-                .maximumSize(nettyProperties.getCacheMaximumSize())
-                //设置并发级别，并发级别是指可以同时写缓存的线程数
-                .concurrencyLevel(nettyProperties.getCacheConcurrencyLevel())
-                // expireAfterWrite设置写缓存后xx秒钟过期
-                .expireAfterWrite(nettyProperties.getCacheExpireAfterWrite(), TimeUnit.SECONDS)
-                //设置缓存的移除通知
-                .removalListener(notification -> log.debug("LoadingCache: {} was removed, cause is {}",notification.getKey(), notification.getCause()))
-                //build方法中可以指定CacheLoader，在缓存不存在时通过CacheLoader的实现自动加载缓存
-                .build(new CacheLoader<String, SyncResponse<String>>() {
-                    @Override
-                    public SyncResponse<String> load(String key) throws Exception {
-                        // 当获取key的缓存不存在时，不需要自动添加
-                        return null;
-                    }
-                });
         this.channelPool = ChannelPool.getInstance(nettyProperties.getChannelPoolSize());
+        this.responseCache = myNettyResponseCache;
     }
 
     @Override
@@ -76,33 +55,24 @@ public class DefaultMyNettyTemplate implements MyNettyTemplate {
 
 
     @Override
-    public String syncSendMessage(NettyMessage message, String seq) throws NettyFwException {
+    public Object syncSendMessage(NettyMessage message, String seq) throws NettyFwException {
         checkForSeq(seq);
         if (StringUtils.isEmpty(message.getNo())) {
             String no = UUID.randomUUID().toString().replace("-", "");
             message.setNo(no);
         }
-        SyncResponse<String> result = new SyncResponse<>();
-        responseCache.put(message.getNo(),result);
+        SyncResponse<Object> result = new SyncResponse<>();
+        responseCache.addResponse(message.getNo(),result);
         sendMessage(channelPool.get(seq), JSON.toJSONString(message));
         try {
             return result.get(this.nettyProperties.getCacheExpireAfterWrite(),TimeUnit.SECONDS);
         } catch (Exception e) {
             e.printStackTrace();
-            responseCache.invalidate(message.getNo());
+            responseCache.invalidateKey(message.getNo());
             throw new NettyFwException(e.getMessage());
         }
     }
 
-
-    @Override
-    public void ackMessageSync(String no, String result) {
-        SyncResponse<String> response = responseCache.getIfPresent(no);
-        if (null != response) {
-            response.setResponse(result);
-            responseCache.invalidate(no);
-        }
-    }
 
     /**
      * 向所有客户端发送消息

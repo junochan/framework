@@ -12,15 +12,15 @@ import org.springframework.util.StringUtils;
 
 /**
  * @Author: Juno
- * @Date: 2020/4/1 9:36
+ * @Date: 2020/4/9 16:14
  */
 @Slf4j
 @ChannelHandler.Sharable
-public class ServerBizHandler extends SimpleChannelInboundHandler<String> {
+public class DispatcherHandle extends SimpleChannelInboundHandler<String>  {
 
     private NettyDispatcher dispatcher;
 
-    public ServerBizHandler(NettyDispatcher dispatcher) {
+    public DispatcherHandle(NettyDispatcher dispatcher) {
         this.dispatcher = dispatcher;
     }
 
@@ -46,7 +46,7 @@ public class ServerBizHandler extends SimpleChannelInboundHandler<String> {
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         log.info("Disconnected with the remote client:{}",ctx.channel().remoteAddress());
-        ChannelPool.getInstance(1).removeClient(ctx);
+        ChannelPool.getInstance().removeClient(ctx);
     }
 
     @Override
@@ -54,5 +54,4 @@ public class ServerBizHandler extends SimpleChannelInboundHandler<String> {
         cause.printStackTrace();
         ctx.close();
     }
-
 }

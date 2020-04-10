@@ -1,6 +1,6 @@
 package com.juno.framework.netty.annotation;
 
-import com.juno.framework.netty.configuration.MyNettyAutoStarter;
+import com.juno.framework.netty.configuration.MyNettyServerConfiguration;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;
@@ -12,6 +12,6 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Import(MyNettyAutoStarter.class)
-public @interface EnableMyNetty {
+@Import(MyNettyServerConfiguration.class)
+public @interface EnableMyNettyServer {
 }

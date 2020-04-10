@@ -1,4 +1,4 @@
-package com.juno.framework.netty.core;
+package com.juno.framework.netty.core.server;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;

@@ -1,5 +1,9 @@
 package com.juno.framework.netty.beans;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -10,7 +14,8 @@ public class NettyMessage {
 
     private String no;
     private String path;
-    private Map<String,String> params;
+    private Map<String,String> params = new HashMap<>();
+    private JSONObject data = new JSONObject();
 
     public String getNo() {
         return no;
@@ -34,5 +39,18 @@ public class NettyMessage {
 
     public void setParams(Map<String, String> params) {
         this.params = params;
+    }
+
+    public JSONObject getData() {
+        return data;
+    }
+
+    public void setData(JSONObject data) {
+        this.data = data;
+    }
+
+    @Override
+    public String toString() {
+        return JSON.toJSONString(this);
     }
 }

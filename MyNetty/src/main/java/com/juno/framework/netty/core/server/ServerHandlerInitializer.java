@@ -1,6 +1,7 @@
-package com.juno.framework.netty.core;
+package com.juno.framework.netty.core.server;
 
 import com.juno.framework.netty.configuration.NettyProperties;
+import com.juno.framework.netty.core.DispatcherHandle;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
@@ -17,11 +18,11 @@ import io.netty.handler.timeout.IdleStateHandler;
 public class ServerHandlerInitializer extends ChannelInitializer<SocketChannel> {
 
     private NettyProperties nettyProperties;
-    private ServerBizHandler serverBizHandler;
+    private DispatcherHandle dispatcherHandle;
 
-    public ServerHandlerInitializer(NettyProperties nettyProperties, ServerBizHandler serverBizHandler) {
+    public ServerHandlerInitializer(NettyProperties nettyProperties, DispatcherHandle dispatcherHandle) {
         this.nettyProperties = nettyProperties;
-        this.serverBizHandler = serverBizHandler;
+        this.dispatcherHandle = dispatcherHandle;
     }
 
     @Override
@@ -32,7 +33,7 @@ public class ServerHandlerInitializer extends ChannelInitializer<SocketChannel> 
         ch.pipeline().addLast(new LengthFieldPrepender(nettyProperties.getLengthFieldLength()));
         ch.pipeline().addLast(new StringDecoder());
         ch.pipeline().addLast(new StringEncoder());
-        ch.pipeline().addLast(serverBizHandler);
+        ch.pipeline().addLast(dispatcherHandle);
     }
 
 }

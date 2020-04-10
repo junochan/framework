@@ -6,8 +6,8 @@ import com.juno.framework.netty.annotation.NettyService;
 import com.juno.framework.netty.beans.NettyBeanWrapper;
 import com.juno.framework.netty.beans.config.NettyBeanDefinition;
 import com.juno.framework.netty.beans.support.NettyBeanDefinitionReader;
-import com.juno.framework.netty.beans.support.NettyDefaultListableBeanFactory;
 import com.juno.framework.netty.beans.support.NettyBeanFactory;
+import com.juno.framework.netty.beans.support.NettyDefaultListableBeanFactory;
 import com.juno.framework.netty.exception.NettyFwException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -16,7 +16,6 @@ import javax.annotation.Resource;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -86,6 +85,9 @@ public class NettyApplicationContext extends NettyDefaultListableBeanFactory imp
 
     @Override
     public Object getBean(String beanName) throws Exception {
+        if (NettyBeanDefinitionReader.MyNettySelfControllerName.equals(beanName)) {
+            return null;
+        }
         NettyBeanDefinition nettyBeanDefinition = this.beanDefinitionMap.get(beanName);
         // 初始化
         Object instance = instantiateBean(nettyBeanDefinition);

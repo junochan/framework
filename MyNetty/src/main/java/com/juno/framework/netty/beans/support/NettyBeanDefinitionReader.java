@@ -2,6 +2,8 @@ package com.juno.framework.netty.beans.support;
 
 
 import com.juno.framework.netty.beans.config.NettyBeanDefinition;
+import com.juno.framework.netty.utils.TransferUtils;
+import com.juno.framework.netty.web.MyNettySelfController;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +21,7 @@ public class NettyBeanDefinitionReader {
 
     //固定配置文件中的key，相对于xml的规范
 //    private final String SCAN_PACKAGE = "scan-package";
-
+    public static final String MyNettySelfControllerName = "myNettySelfController";
     private List<String> registryBeanClasses = new ArrayList<String>();
 
 //    private Properties config = new Properties();
@@ -40,6 +42,7 @@ public class NettyBeanDefinitionReader {
 //                }
 //            }
 //        }
+        registryBeanClasses.add(MyNettySelfController.class.getName());
         doScanner(scanPackage);
     }
 
@@ -73,7 +76,7 @@ public class NettyBeanDefinitionReader {
                 //1、默认是类名首字母小写
                 //2、自定义名字
                 //3、接口注入
-                result.add(doCreateBeanDefinition(toLowerFirstCase(clazz.getSimpleName()),clazz.getName()));
+                result.add(doCreateBeanDefinition(TransferUtils.toLowerFirstCase(clazz.getSimpleName()),clazz.getName()));
 
                 Class<?>[] interfaces = clazz.getInterfaces();
                 for (Class<?> i : interfaces) {
@@ -98,11 +101,5 @@ public class NettyBeanDefinitionReader {
         return beanDefinition;
     }
 
-
-    private String toLowerFirstCase(String simpleName) {
-        char [] chars = simpleName.toCharArray();
-        chars[0] += 32;
-        return String.valueOf(chars);
-    }
 
 }

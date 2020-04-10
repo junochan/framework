@@ -42,14 +42,30 @@ public class NettyProperties {
 
     private String scanPackage;
 
-    private int cacheInitialCapacity = 100;
+    private int cacheInitialCapacity = 1;
 
-    private long cacheMaximumSize = 10000;
+    private long cacheMaximumSize = 250;
 
     private int cacheConcurrencyLevel = 8;
 
-    private int cacheExpireAfterWrite = 10;
+    private int cacheExpireAfterWrite = 60;
 
     private String docPath;
+
+    private String serverHost;
+
+    private int serverPort;
+
+    private int clientPingInterval = 10;
+
+    private int clientRetryInterval = 10;
+
+    private int clientBaseSleepTimeMs = 1000;
+
+    private int clientMaxRetries = 30;
+
+    private int clientMaxSleepMs = 29;
+
+    private String callbackPath = "/mynety-callback";
 
 }
