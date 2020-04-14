@@ -32,10 +32,22 @@ my-netty:
   channel-pool-size: 100
   scan-package: com.juno.mynetty.controller  # controller package path
 ```
-***application***
-> the annotation of EnableMyNetty is to start the Netty server
+***Application***
+> the annotation of EnableMyNettyServer is to start the Netty server
 ```java
-@EnableMyNetty
+@EnableMyNettyServer
+@SpringBootApplication
+public class Application {
+
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+
+}
+```
+> the annotation of EnableMyNettyClient is to start the Netty client
+```java
+@EnableMyNettyClient
 @SpringBootApplication
 public class Application {
 
@@ -59,27 +71,10 @@ public class MyNettyController {
     public void registry(ChannelHandlerContext ctx, String seq) {
         myNettyTemplate.registry(ctx,seq);
     }
-    
-    @NettyMapping("ack-message")
-    public void ackMessage(NettyMessage message) {
-        myNettyTemplate.ackMessageSync(message.getNo(),JSON.toJSONString(message));
-    }
 
 }
-```
-***netty client***
-```java
-NettyClient tcpClient = new NettyClient("ip", port);
-tcpClient.connect();
 
-Map<String,String> params = new HashMap<>();
-params.put("seq","10001");
-NettyMessage nettyMessage = new NettyMessage();
-nettyMessage.setPath("/registry");
-nettyMessage.setParams(params);
-tcpClient.sendMessage(JSON.toJSONString(nettyMessage));
-```
-***message format***
+***Message Format***
 @link{com.juno.framework.netty.beans.NettyMessage}
 ```java
 public class NettyMessage {
